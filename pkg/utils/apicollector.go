@@ -13,7 +13,7 @@ type api_key struct {
     Location_query string
 }
 
-
+// Retrieves API key from config/mykeys.json
 func GetApi() *api_key {
     data, err := ioutil.ReadFile("./pkg/config/mykeys.json")
     log.Println("checking for mykeys.json")
@@ -25,6 +25,7 @@ func GetApi() *api_key {
     return getApiFromFile(data)
 }
 
+// retrieve API keys from a file
 func getApiFromFile(key_data []byte) *api_key {
     log.Println("data retrieved:\n" + string(key_data))
     var keys api_key
@@ -33,6 +34,7 @@ func getApiFromFile(key_data []byte) *api_key {
     return &keys
 }
 
+// retrieve API keys from the user
 func collectApiFromUser() *api_key {
     os.Exit(1)
     return nil 

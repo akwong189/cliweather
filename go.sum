@@ -1,3 +1,4 @@
+github.com/buger/jsonparser v1.0.0 h1:etJTGF5ESxjI0Ic2UaLQs2LQQpa8G9ykQScukbh4L8A=
 github.com/buger/jsonparser v1.0.0/go.mod h1:tgcrVJ81GPSF0mz+0nu1Xaz0fazGPrmmJfJtxjbHhUQ=
 github.com/jroimartin/gocui v0.3.0/go.mod h1:7i7bbj99OgFHzo7kB2zPb8pXLqMBSQegY7azfqXMkyY=
 github.com/jroimartin/gocui v0.4.0/go.mod h1:7i7bbj99OgFHzo7kB2zPb8pXLqMBSQegY7azfqXMkyY=

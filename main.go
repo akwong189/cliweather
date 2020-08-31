@@ -8,6 +8,7 @@ import (
 func main() {
     log.Println("Program starting")
     api_keys := utils.GetApi()
-    utils.GetWeather(api_keys.Weather, "current location")
+    loc := utils.GetGeolocation(api_keys.Geolocation, "SAN JOSE")
+    utils.GetWeather(api_keys.Weather, loc)
     log.Println("Program ended")
 }

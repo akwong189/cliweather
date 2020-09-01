@@ -4,13 +4,14 @@ import (
     "log"
     "io/ioutil"
     "net/http"
+    "encoding/json"
 
     "github.com/buger/jsonparser"
 )
 
 type weather struct {
-    Summary string
-    Icon string
+    Summary string `json:"summary"`
+    Icon string `json:"icon"`
     Temp float64 `json:"temperature"`
     AppTemp float64 `json:"apparentTemperature"`
     DewPoint float64 `json:"dewPoint"`
@@ -27,8 +28,6 @@ type forcast struct {
 
 // Weather using darksky api, may change it when dark sky stops providing api support
 func GetWeather(weather_api_key string, location *geolocation) *forcast {
-    var curr_forcast forcast
-
     url := "https://api.darksky.net/forecast/" + weather_api_key + "/" + location.lat + "," + location.long
     resp, err := http.Get(url)
     if err != nil {
@@ -44,20 +43,42 @@ func GetWeather(weather_api_key string, location *geolocation) *forcast {
     }
 
     log.Println("collected data for current forcast")
-    // log.Println(string(body))
 
-    data, _, _, err := jsonparser.Get(body, "currently")
+    curr_data, _, _, err := jsonparser.Get(body, "currently")
     if err != nil {
-        log.Fatalln("Input didn't provide any information!")
+        log.Fatalln("Input didn't provide any current forcast information!")
     }
-    parseWeather(data)
-    
+    curr_weather := parseWeather(curr_data)
 
-    return &curr_forcast
+    hourly_data, _, _, err := jsonparser.Get(body, "hourly", "data")
+    if err != nil {
+        log.Fatalln("Input didn't provide any hourly forcast information!")
+    }
+    hourly_forcast := parseMultipleForcast(hourly_data)
+
+    daily_data, _, _, err := jsonparser.Get(body, "hourly", "data")
+    if err != nil {
+        log.Fatalln("Input didn't provide any hourly forcast information!")
+    }
+    daily_forcast := parseMultipleForcast(daily_data)
+
+    return &forcast{curr_weather, hourly_forcast, daily_forcast}
+}
+
+// Parses an array of weather forcast provided from the Darksky API
+func parseMultipleForcast(data []byte) []weather {
+    arr := make([]weather, 0)
+    if err := json.Unmarshal(data, &arr); err != nil {
+        log.Fatalln("Failed to parse into individual bytes of data", err)
+    }
+
+    log.Println("Parsed array output", arr)
+
+    return arr
 }
 
 // Parses the weather provided from the Darksky API
-func parseWeather(data []byte) *weather {
+func parseWeather(data []byte) weather {
     log.Println("current data recieved: ", string(data))
 
     summary, err := jsonparser.GetString(data, "summary")
@@ -100,7 +121,7 @@ func parseWeather(data []byte) *weather {
         log.Fatalln("Wind Speed is missing!")
     }
 
-    log.Println(summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed)
+    log.Println("parsing completed", summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed)
 
-    return &weather{summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed}
+    return weather{summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed}
 }

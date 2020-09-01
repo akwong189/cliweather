@@ -9,6 +9,7 @@ import (
 
 type api_key struct {
     Weather string
+    IP_location string
     Geolocation string
     Location_query string
 }
@@ -30,7 +31,7 @@ func getApiFromFile(key_data []byte) *api_key {
     log.Println("data retrieved:\n" + string(key_data))
     var keys api_key
     json.Unmarshal(key_data, &keys)
-    log.Println("collected keys, key info are:\n\tweather api: " + keys.Weather + "\n\tgeolocation api: " + keys.Geolocation + "\n\tlocation query api: " + keys.Location_query)
+    log.Println("collected keys, key info are:\n\tweather api: " + keys.Weather + "\n\tIP location api: " + keys.IP_location + "\n\tgeolocation api: " + keys.Geolocation + "\n\tlocation query api: " + keys.Location_query)
     return &keys
 }
 

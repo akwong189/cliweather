@@ -44,7 +44,7 @@ func GetGeolocation(geolocation_api, location string) *geolocation {
         log.Fatalln("failed to retrieve lattitude data")
     }
 
-    log.Println("retrieved longitude, lattitude: ", long, lat)
+    log.Println("retrieved lattitude, longitude: ", lat, long)
     
     return &geolocation{long, lat}
 }

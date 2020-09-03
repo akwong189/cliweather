@@ -57,10 +57,15 @@ func collectApiFromUser() *api_key {
     return &apis
 }
 
+// Ask user for key via CLI (will be removed when GUI is implemented)
 func askForKey(api_source string) string {
     var key string
     fmt.Println("Enter your key for " + api_source + ": ")
     fmt.Scan(&key)
+
+    if key == "_" {
+        return ""
+    }
 
     return key
 }

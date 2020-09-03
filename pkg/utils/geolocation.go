@@ -2,49 +2,67 @@ package utils
 
 import (
     "io/ioutil"
-    "log"
     "net/http"
     "github.com/buger/jsonparser"
 )
 
-type geolocation struct {
-    long string
-    lat string
+type Geolocation struct {
+    City string
+    Region string
+    Country string
+    Long string
+    Lat string
 }
 
 // collect geolocation data from a particular location, using geocode api for faster reads (optional, leave black for none)
-func GetGeolocation(geolocation_api, location string) *geolocation {
+func GetGeolocation(geolocation_api, location string) *Geolocation {
     url := "https://geocode.xyz/" + location + "?json=1"
     if len(geolocation_api) != 0 {
         url += "auth=" + geolocation_api
     }
-    log.Println("contacting url: " + url)
+    Log.Println("contacting url: " + url)
 
     resp, err := http.Get(url)
     if err != nil {
-        log.Fatalln(err)
+        Log.Fatalln(err)
     }
 
     defer resp.Body.Close()
 
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
-        log.Fatalln(err)
+        Log.Fatalln(err)
     }
 
-    log.Println(string(body))
+    Log.Println(string(body))
 
     long, err := jsonparser.GetString(body, "longt")
     if err != nil {
-        log.Fatalln("failed to retrieve longitude data")
+        Log.Fatalln("failed to retrieve longitude data")
     }
     
     lat, err := jsonparser.GetString(body, "latt")
     if err != nil {
-        log.Fatalln("failed to retrieve lattitude data")
+        Log.Fatalln("failed to retrieve lattitude data")
     }
 
-    log.Println("retrieved lattitude, longitude: ", lat, long)
+    city, err := jsonparser.GetString(body, "city")
+    if err != nil {
+        Log.Fatalln("failed to retrieve city data")
+    }
     
-    return &geolocation{long, lat}
+    state, err := jsonparser.GetString(body, "state")
+    if err != nil {
+        Log.Fatalln("failed to retrieve state data")
+    }
+
+    country, err := jsonparser.GetString(body, "country")
+    if err != nil {
+        Log.Fatalln("failed to retrieve country data")
+    }
+
+    Log.Println("retrieved city, state, country: ", city, state, country)
+    Log.Println("retrieved lattitude, longitude: ", lat, long)
+    
+    return &Geolocation{city, state, country, long, lat}
 }

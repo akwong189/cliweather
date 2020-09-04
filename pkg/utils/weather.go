@@ -20,9 +20,9 @@ type Weather struct {
 }
 
 type Forcast struct {
-    current_weather Weather
-    forcast_hourly []Weather
-    forcast_daily []Weather
+    CurrentWeather *Weather
+    ForcastHourly []Weather
+    ForcastDaily []Weather
 }
 
 // Weather using darksky api, may change it when dark sky stops providing api support
@@ -77,7 +77,7 @@ func parseMultipleForcast(data []byte) []Weather {
 }
 
 // Parses the weather provided from the Darksky API
-func parseWeather(data []byte) Weather {
+func parseWeather(data []byte) *Weather {
     Log.Println("current data recieved: ", string(data))
 
     summary, err := jsonparser.GetString(data, "summary")
@@ -122,5 +122,5 @@ func parseWeather(data []byte) Weather {
 
     Log.Println("parsing completed", summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed)
 
-    return Weather{summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed}
+    return &Weather{summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed}
 }

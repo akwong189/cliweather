@@ -2,6 +2,7 @@ package utils
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -15,32 +16,32 @@ type GeoLocation struct {
 
 func RetrieveCoordinates(address string) (*GeoLocation, error) {
 	url := "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=" + url.QueryEscape(address) + "&benchmark=2020&format=json"
-	Log.Println("contacting url: " + url)
+	log.Println("contacting url: " + url)
 
 	resp, err := http.Get(url)
 	if err != nil {
-		Log.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		Log.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	addressMatches, _, _, err := jsonparser.Get(body, "result", "addressMatches")
 	if err != nil {
-		Log.Fatalln(err)
+		log.Fatalln(err)
 	}
 
-	Log.Println(string(addressMatches))
+	log.Println(string(addressMatches))
 	geolocations, err := parseAddressMatches(addressMatches)
 	if err != nil {
-		Log.Fatalln(err)
+		log.Fatalln(err)
 	}
 
-	Log.Println(geolocations[0])
+	log.Println(geolocations[0])
 	return &geolocations[0], nil
 }
 
@@ -49,18 +50,18 @@ func parseAddressMatches(addressMatches []byte) ([]GeoLocation, error) {
 
 	_, err := jsonparser.ArrayEach(addressMatches, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		if err != nil {
-			Log.Fatalln(err)
+			log.Fatalln(err)
 		}
 
-		log, err := jsonparser.GetFloat(value, "coordinates", "x")
+		long, err := jsonparser.GetFloat(value, "coordinates", "x")
 		if err != nil {
-			Log.Fatalln(err)
+			log.Fatalln(err)
 		}
 		lat, err := jsonparser.GetFloat(value, "coordinates", "y")
 		if err != nil {
-			Log.Fatalln(err)
+			log.Fatalln(err)
 		}
-		geolocations = append(geolocations, GeoLocation{lat, log})
+		geolocations = append(geolocations, GeoLocation{lat, long})
 	})
 
 	// TODO: Add code to handle empty geolocations

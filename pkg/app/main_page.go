@@ -1,6 +1,8 @@
 package app
 
 import (
+	"log"
+
 	"github.com/akwong189/cliweather/pkg/utils"
 	"github.com/jroimartin/gocui"
 )
@@ -9,7 +11,7 @@ import (
 func StartApp() {
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
-		utils.Log.Panicln("Failed to init GUI")
+		log.Panicln("Failed to init GUI")
 	}
 
 	defer g.Close()
@@ -29,11 +31,11 @@ func StartApp() {
 	utils.RetrieveCoordinates("363 Alric Drive, San Jose, California 95123")
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
-		utils.Log.Panicln(err)
+		log.Panicln(err)
 	}
 
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		utils.Log.Panicln(err)
+		log.Panicln(err)
 	}
 }
 

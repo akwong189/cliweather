@@ -1,126 +1,132 @@
 package utils
 
 import (
-    "io/ioutil"
-    "net/http"
-    "encoding/json"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 
-    "github.com/buger/jsonparser"
+	"github.com/buger/jsonparser"
 )
 
 type Weather struct {
-    Summary string `json:"summary"`
-    Icon string `json:"icon"`
-    Temp float64 `json:"temperature"`
-    AppTemp float64 `json:"apparentTemperature"`
-    DewPoint float64 `json:"dewPoint"`
-    Humidity float64 `json:"humidity"`
-    Pressure float64 `json:"pressure"`
-    WindSpeed float64 `json:"windSpeed"`
+	Summary   string  `json:"summary"`
+	Icon      string  `json:"icon"`
+	Temp      float64 `json:"temperature"`
+	AppTemp   float64 `json:"apparentTemperature"`
+	DewPoint  float64 `json:"dewPoint"`
+	Humidity  float64 `json:"humidity"`
+	Pressure  float64 `json:"pressure"`
+	WindSpeed float64 `json:"windSpeed"`
 }
 
 type Forcast struct {
-    CurrentWeather *Weather
-    ForcastHourly []Weather
-    ForcastDaily []Weather
+	CurrentWeather *Weather
+	ForcastHourly  []Weather
+	ForcastDaily   []Weather
 }
 
 // Weather using darksky api, may change it when dark sky stops providing api support
-func GetWeather(weather_api_key string, location *Geolocation) *Forcast {
-    url := "https://api.darksky.net/forecast/" + weather_api_key + "/" + location.Lat + "," + location.Long
-    resp, err := http.Get(url)
-    if err != nil {
-        Log.Fatalln(err)
-    }
-    Log.Println(url)
+func GetWeather(weatherApiKey string, location *Geolocation) *Forcast {
+	resp, err := callOpenWeatherMapAPI(location.Lat, location.Long, weatherApiKey)
 
-    defer resp.Body.Close()
+	defer resp.Body.Close()
 
-    body, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        Log.Fatalln(err)
-    }
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-    Log.Println("collected data for current forcast")
+	log.Println("collected data for current forcast")
 
-    curr_data, _, _, err := jsonparser.Get(body, "currently")
-    if err != nil {
-        Log.Fatalln("Input didn't provide any current forcast information!")
-    }
-    curr_weather := parseWeather(curr_data)
+	curr_data, _, _, err := jsonparser.Get(body, "currently")
+	if err != nil {
+		log.Fatalln("Input didn't provide any current forcast information!")
+	}
+	curr_weather := parseWeather(curr_data)
 
-    hourly_data, _, _, err := jsonparser.Get(body, "hourly", "data")
-    if err != nil {
-        Log.Fatalln("Input didn't provide any hourly forcast information!")
-    }
-    hourly_forcast := parseMultipleForcast(hourly_data)
+	hourly_data, _, _, err := jsonparser.Get(body, "hourly", "data")
+	if err != nil {
+		log.Fatalln("Input didn't provide any hourly forcast information!")
+	}
+	hourly_forcast := parseMultipleForcast(hourly_data)
 
-    daily_data, _, _, err := jsonparser.Get(body, "hourly", "data")
-    if err != nil {
-        Log.Fatalln("Input didn't provide any hourly forcast information!")
-    }
-    daily_forcast := parseMultipleForcast(daily_data)
+	daily_data, _, _, err := jsonparser.Get(body, "hourly", "data")
+	if err != nil {
+		log.Fatalln("Input didn't provide any hourly forcast information!")
+	}
+	daily_forcast := parseMultipleForcast(daily_data)
 
-    return &Forcast{curr_weather, hourly_forcast, daily_forcast}
+	return &Forcast{curr_weather, hourly_forcast, daily_forcast}
 }
 
 // Parses an array of weather forcast provided from the Darksky API
 func parseMultipleForcast(data []byte) []Weather {
-    arr := make([]Weather, 0)
-    if err := json.Unmarshal(data, &arr); err != nil {
-        Log.Fatalln("Failed to parse into individual bytes of data", err)
-    }
+	arr := make([]Weather, 0)
+	if err := json.Unmarshal(data, &arr); err != nil {
+		log.Fatalln("Failed to parse into individual bytes of data", err)
+	}
 
-    Log.Println("Parsed array output", arr)
+	log.Println("Parsed array output", arr)
 
-    return arr
+	return arr
+}
+
+func callOpenWeatherMapAPI(long, lat string, apiKey string) (*http.Response, error) {
+	url := "https://api.openweathermap.org/data/3.0/onecall?lat=" + fmt.Sprintf("%v", lat) + "&lon=" + fmt.Sprintf("%v", long) + "&exclude=minutely" + "&appid=" + apiKey
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return resp, err
 }
 
 // Parses the weather provided from the Darksky API
 func parseWeather(data []byte) *Weather {
-    Log.Println("current data recieved: ", string(data))
+	log.Println("current data recieved: ", string(data))
 
-    summary, err := jsonparser.GetString(data, "summary")
-    if err != nil {
-        Log.Fatalln("Summary is missing!")
-    }
+	summary, err := jsonparser.GetString(data, "summary")
+	if err != nil {
+		log.Fatalln("Summary is missing!")
+	}
 
-    icon, err := jsonparser.GetString(data, "icon")
-    if err != nil {
-        Log.Fatalln("Icon is missing!")
-    }
+	icon, err := jsonparser.GetString(data, "icon")
+	if err != nil {
+		log.Fatalln("Icon is missing!")
+	}
 
-    temp, err := jsonparser.GetFloat(data, "temperature")
-    if err != nil {
-        Log.Fatalln("Temperature is missing!")
-    }
+	temp, err := jsonparser.GetFloat(data, "temperature")
+	if err != nil {
+		log.Fatalln("Temperature is missing!")
+	}
 
-    appTemp, err := jsonparser.GetFloat(data, "apparentTemperature")
-    if err != nil {
-        Log.Fatalln("Apparent Temperature is missing!")
-    }
+	appTemp, err := jsonparser.GetFloat(data, "apparentTemperature")
+	if err != nil {
+		log.Fatalln("Apparent Temperature is missing!")
+	}
 
-    dewPoint, err := jsonparser.GetFloat(data, "dewPoint")
-    if err != nil {
-        Log.Fatalln("Dew Point is missing!")
-    }
+	dewPoint, err := jsonparser.GetFloat(data, "dewPoint")
+	if err != nil {
+		log.Fatalln("Dew Point is missing!")
+	}
 
-    humidity, err := jsonparser.GetFloat(data, "humidity")
-    if err != nil {
-        Log.Fatalln("Humidity is missing!")
-    }
+	humidity, err := jsonparser.GetFloat(data, "humidity")
+	if err != nil {
+		log.Fatalln("Humidity is missing!")
+	}
 
-    pressure, err := jsonparser.GetFloat(data, "pressure")
-    if err != nil {
-        Log.Fatalln("Pressure is missing!")
-    }
+	pressure, err := jsonparser.GetFloat(data, "pressure")
+	if err != nil {
+		log.Fatalln("Pressure is missing!")
+	}
 
-    windSpeed, err := jsonparser.GetFloat(data, "windSpeed")
-    if err != nil {
-        Log.Fatalln("Wind Speed is missing!")
-    }
+	windSpeed, err := jsonparser.GetFloat(data, "windSpeed")
+	if err != nil {
+		log.Fatalln("Wind Speed is missing!")
+	}
 
-    Log.Println("parsing completed", summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed)
+	log.Println("parsing completed", summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed)
 
-    return &Weather{summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed}
+	return &Weather{summary, icon, temp, appTemp, dewPoint, humidity, pressure, windSpeed}
 }

@@ -57,6 +57,7 @@ func addressGeoLocate(location, countryCode, apiKey string) (*GeoLocation, error
 }
 
 func decodeGeoLocationData(body []byte) (*GeoLocation, error) {
+	// TODO: issue with handling geolocation data as the data arrives as an array and not as a single object
 	log.Println(string(body))
 	name, err := jsonparser.GetString(body, "name")
 	if err != nil {

@@ -3,7 +3,8 @@ package app
 import (
 	"log"
 
-	"github.com/akwong189/cliweather/pkg/utils"
+	geocode "github.com/akwong189/cliweather/pkg/api/geocode"
+	geojs "github.com/akwong189/cliweather/pkg/api/geojs"
 	"github.com/jroimartin/gocui"
 )
 
@@ -28,7 +29,8 @@ func StartApp() {
 
 	// g.SetManager(loc_widget, curr_widget)
 
-	utils.RetrieveCoordinates("363 Alric Drive, San Jose, California 95123")
+	log.Println(geojs.GetPublicIPAddress())
+	geocode.RetrieveCoordinates("363 Alric Drive, San Jose, California 95123")
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		log.Panicln(err)

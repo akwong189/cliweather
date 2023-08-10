@@ -10,19 +10,19 @@ func TestGeoLocateDecodeZipcode(t *testing.T) {
 	}
 
 	if geolocation.Country != "US" {
-		t.Fatal("Incorrect country")
+		t.Errorf("Incorrect country")
 	}
-	if geolocation.Latitude != 37.296 {
-		t.Fatal("Incorrect latitude")
+	if geolocation.Latitude != "37.2960" {
+		t.Errorf("Incorrect latitude")
 	}
-	if geolocation.Longitude != -121.8939 {
-		t.Fatal("Incorrect longitude")
+	if geolocation.Longitude != "-121.8939" {
+		t.Errorf("Incorrect longitude")
 	}
 	if geolocation.Name != "San Jose" {
-		t.Fatal("Incorrect city")
+		t.Errorf("Incorrect city")
 	}
 	if geolocation.Zip != "95125" {
-		t.Fatal("Incorrect zipcode")
+		t.Errorf("Incorrect zipcode")
 	}
 }
 
@@ -34,18 +34,18 @@ func TestGeoLocateDecodeAddress(t *testing.T) {
 	}
 
 	if geolocation.Country != "US" {
-		t.Fatal("Incorrect country")
+		t.Errorf("Incorrect country")
 	}
-	if geolocation.Latitude != 37.296 {
-		t.Fatal("Incorrect latitude")
+	if geolocation.Latitude != "37.2960" {
+		t.Errorf("Incorrect latitude")
 	}
-	if geolocation.Longitude != -121.8939 {
-		t.Fatal("Incorrect longitude")
+	if geolocation.Longitude != "-121.8939" {
+		t.Errorf("Incorrect longitude")
 	}
 	if geolocation.Name != "San Jose" {
-		t.Fatal("Incorrect city")
+		t.Errorf("Incorrect city")
 	}
-	if geolocation.Zip != "95125" {
-		t.Fatal("Incorrect zipcode")
+	if geolocation.State != "CA" {
+		t.Errorf("Incorrect state")
 	}
 }

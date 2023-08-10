@@ -15,8 +15,8 @@ var zipGeocodeUrl = "http://api.openweathermap.org/geo/1.0/zip?zip=%s,%s&appid=%
 var addrGeocodeUrl = "http://api.openweathermap.org/geo/1.0/direct?q=%s,%s&limit=%d&appid=%s"
 
 type GeoLocation struct {
-	Longitude float64
-	Latitude  float64
+	Longitude string
+	Latitude  string
 	Name      string
 	Country   string
 	Zip       string
@@ -86,8 +86,8 @@ func decodeGeoLocationData(body []byte) (*GeoLocation, error) {
 		log.Println("zip not found")
 	}
 	return &GeoLocation{
-		Longitude: long,
-		Latitude:  lat,
+		Longitude: strconv.FormatFloat(long, 'f', 4, 64),
+		Latitude:  strconv.FormatFloat(lat, 'f', 4, 64),
 		Name:      name,
 		Country:   countryCode,
 		Zip:       zip,

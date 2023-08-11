@@ -53,7 +53,25 @@ func addressGeoLocate(location, countryCode, apiKey string) (*GeoLocation, error
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return decodeGeoLocationData(body)
+
+	var locations []*GeoLocation
+	jsonparser.ArrayEach(body, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		log.Println(string(body))
+		if err != nil {
+			log.Fatalln(err)
+		}
+		loc, err := decodeGeoLocationData(value)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		locations = append(locations, loc)
+	})
+
+	if len(location) == 0 {
+		log.Fatalln("not enough positions")
+	}
+
+	return locations[0], nil
 }
 
 func decodeGeoLocationData(body []byte) (*GeoLocation, error) {

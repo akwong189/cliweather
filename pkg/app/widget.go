@@ -14,11 +14,6 @@ type LocationWidget struct {
 	loc     *utils.Geolocation
 }
 
-// helper function to print the location data
-func printLocation(loc *utils.Geolocation) string {
-	return fmt.Sprintf("%s, %s, %s", loc.City, loc.Region, loc.Country)
-}
-
 // creates a new location widget (initalization uses current location)
 func NewLocationWidget(name string, x, y int, handler func(g *gocui.Gui, v *gocui.View) error, loc *utils.Geolocation) *LocationWidget {
 	return &LocationWidget{name: name, x: x, y: y, handler: handler, loc: loc}
@@ -44,7 +39,7 @@ func (l *LocationWidget) Layout(g *gocui.Gui) error {
 			return err
 		}
 
-		fmt.Fprint(v, printLocation(l.loc))
+		fmt.Fprint(v, l.loc.GetLocationString())
 	}
 	return nil
 }

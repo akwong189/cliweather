@@ -29,7 +29,7 @@ type Forcast struct {
 
 // Weather using darksky api, may change it when dark sky stops providing api support
 func GetWeather(weatherApiKey string, location *Geolocation) *Forcast {
-	resp, err := callOpenWeatherMapAPI(location.Lat, location.Long, weatherApiKey)
+	resp, err := callOpenWeatherMapAPI(location.Latitude, location.Longitude, weatherApiKey)
 
 	defer resp.Body.Close()
 

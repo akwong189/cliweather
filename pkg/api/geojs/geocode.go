@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/akwong189/cliweather/pkg/api/openweathermap"
+	"github.com/akwong189/cliweather/pkg/utils"
 	"github.com/buger/jsonparser"
 )
 
-func GetGeolocation() *openweathermap.GeoLocation {
+func GetGeolocation() *utils.Geolocation {
 	resp := retrieveGeolocation()
 	defer resp.Body.Close()
 
@@ -31,7 +31,7 @@ func retrieveGeolocation() *http.Response {
 	return resp
 }
 
-func parseGeolocation(body []byte) *openweathermap.GeoLocation {
+func parseGeolocation(body []byte) *utils.Geolocation {
 	city, err := jsonparser.GetString(body, "city")
 	if err != nil {
 		log.Fatalln(err)
@@ -53,7 +53,7 @@ func parseGeolocation(body []byte) *openweathermap.GeoLocation {
 		log.Fatalln(err)
 	}
 
-	return &openweathermap.GeoLocation{
+	return &utils.Geolocation{
 		Longitude: long,
 		Latitude:  lat,
 		Name:      city,

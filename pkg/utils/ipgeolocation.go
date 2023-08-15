@@ -55,6 +55,6 @@ func GetCurrentIPLocation() *Geolocation {
 
 	log.Println("retrieved current city, state, country: ", city, state, country)
 	log.Println("retrieved current location lattitude, longitude: ", lat_float, long_float)
-	return &Geolocation{City: city, Region: state, Country: country, Long: fmt.Sprintf("%f", long_float), Lat: fmt.Sprintf("%f", lat_float)}
+	return &Geolocation{Name: city, State: state, Country: country, Longitude: fmt.Sprintf("%f", long_float), Latitude: fmt.Sprintf("%f", lat_float)}
 
 }

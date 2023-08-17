@@ -7,6 +7,7 @@ import (
 	// geojs "github.com/akwong189/cliweather/pkg/api/geojs"
 
 	"github.com/akwong189/cliweather/pkg/data"
+	"github.com/akwong189/cliweather/pkg/widgets"
 	"github.com/jroimartin/gocui"
 )
 
@@ -26,14 +27,13 @@ func StartApp() {
 	// loc := utils.GetCurrentIPLocation()
 	// forcast := utils.GetWeather(api_keys.Weather, loc)
 
-	loc := data.GenerateGeolocation()
-	loc_widget := NewLocationWidget("loc", 1, 0, nil, loc)
+	// loc := GrabCurrentLocation()
+	locs := data.GenerateGeolocations(100)
+	sel_widget := widgets.GetSelectorWidget(nil, locs)
+	loc_widget := widgets.GetLocationWidget("loc", 1, 0, nil, locs[0])
 	// curr_widget := NewCurrentWeatherWidget("curr", 1, 3, forcast.CurrentWeather)
 
-	g.SetManager(loc_widget)
-
-	// log.Println(geojs.GetPublicIPAddress())
-	// geocode.RetrieveCoordinates("363 Alric Drive, San Jose, California 95123")
+	g.SetManager(loc_widget, sel_widget)
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		log.Panicln(err)

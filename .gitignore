@@ -4,3 +4,5 @@ pkg/config/mykeys.json
 pkg/config/keys.json
 logs/*
 *.log
+cliweather
+examples/*

@@ -39,6 +39,13 @@ func StartApp() {
 		log.Panicln(err)
 	}
 
+	if err := g.SetKeybinding("selector", gocui.KeyArrowDown, gocui.ModNone, widgets.CursorDown); err != nil {
+		log.Panicln(err)
+	}
+	if err := g.SetKeybinding("selector", gocui.KeyArrowUp, gocui.ModNone, widgets.CursorUp); err != nil {
+		log.Panicln(err)
+	}
+
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
 	}

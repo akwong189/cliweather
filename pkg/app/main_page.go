@@ -3,9 +3,6 @@ package app
 import (
 	"log"
 
-	// geocode "github.com/akwong189/cliweather/pkg/api/geocode"
-	// geojs "github.com/akwong189/cliweather/pkg/api/geojs"
-
 	"github.com/akwong189/cliweather/pkg/data"
 	"github.com/akwong189/cliweather/pkg/widgets"
 	"github.com/jroimartin/gocui"
@@ -20,35 +17,26 @@ func StartApp() {
 
 	defer g.Close()
 
-	g.Highlight = true
-	g.SelFgColor = gocui.ColorBlue
-
 	// api_keys, err := utils.GetApi()
 	// loc := utils.GetCurrentIPLocation()
 	// forcast := utils.GetWeather(api_keys.Weather, loc)
 
 	// loc := GrabCurrentLocation()
 	locs := data.GenerateGeolocations(100)
-	sel_widget := widgets.GetSelectorWidget(nil, locs)
-	loc_widget := widgets.GetLocationWidget("loc", 1, 0, nil, locs[0])
-	// curr_widget := NewCurrentWeatherWidget("curr", 1, 3, forcast.CurrentWeather)
+	loc_widget := widgets.GetLocationWidget(locs[0])
+	curr_widget := widgets.GetWeatherWidget(data.GenerateWeatherData())
 
-	g.SetManager(loc_widget, sel_widget)
+	g.SetManager(loc_widget, curr_widget)
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		log.Panicln(err)
 	}
 
-	if err := g.SetKeybinding("selector", gocui.KeyArrowDown, gocui.ModNone, widgets.CursorDown); err != nil {
-		log.Panicln(err)
-	}
-	if err := g.SetKeybinding("selector", gocui.KeyArrowUp, gocui.ModNone, widgets.CursorUp); err != nil {
+	if err := KeyBindings(g, locs); err != nil {
 		log.Panicln(err)
 	}
 
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Panicln(err)
-	}
+	log.Printf("GUI closed\n")
 }
 
 // Quits the program

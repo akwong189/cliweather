@@ -9,38 +9,39 @@ import (
 )
 
 type SelectorWidget struct {
-	handler   func(g *gocui.Gui, v *gocui.View) error
-	locations []*utils.Geolocation
+	Locations []*utils.Geolocation
 }
 
-func GetSelectorWidget(handler func(g *gocui.Gui, v *gocui.View) error, locations []*utils.Geolocation) *SelectorWidget {
-	return &SelectorWidget{handler, locations}
-}
-
-func (s *SelectorWidget) Layout(g *gocui.Gui) error {
+func (s *SelectorWidget) OpenSelector(g *gocui.Gui, v *gocui.View) error {
 	w, h := g.Size()
-	v, err := g.SetView("selector", w/2-60, h/2-20, w/2+60, h/2+20)
-
-	if err != nil {
-		v.Title = "Select Location"
-		v.Highlight = true
-		v.SelBgColor = gocui.ColorGreen
-		v.SelFgColor = gocui.ColorBlack
+	if v, err := g.SetView("selector", w/2-60, h/2-20, w/2+60, h/2+20); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 
+		v.Title = "Select Location"
+		v.Highlight = true
+		v.SelBgColor = gocui.ColorGreen
+		v.SelFgColor = gocui.ColorBlack
+
 		if _, err := g.SetCurrentView("selector"); err != nil {
 			return nil
 		}
+		for _, loc := range s.Locations {
+			fmt.Fprint(v, loc.GetLocationString()+"\n")
+		}
 	}
 
-	for _, loc := range s.locations {
-		fmt.Fprint(v, loc.GetLocationString()+"\n")
+	return nil
+}
+
+func (s *SelectorWidget) CloseSelector(g *gocui.Gui, v *gocui.View) error {
+	if err := g.DeleteView("selector"); err != nil {
+		return err
 	}
-
-	// setKeybindings(g)
-
+	if _, err := g.SetCurrentView("location"); err != nil {
+		return err
+	}
 	return nil
 }
 

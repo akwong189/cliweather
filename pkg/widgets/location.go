@@ -31,7 +31,7 @@ func (l *LocationWidget) Layout(g *gocui.Gui) error {
 			return nil
 		}
 
-		fmt.Fprint(v, l.Loc.GetLocationString())
+		fmt.Fprint(v, "📍\t"+l.Loc.GetLocationString())
 	}
 	return nil
 }

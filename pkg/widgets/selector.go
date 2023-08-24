@@ -10,6 +10,7 @@ import (
 
 type SelectorWidget struct {
 	Locations []*utils.Geolocation
+	Updator   *utils.UpdateChannels
 }
 
 func (s *SelectorWidget) OpenSelector(g *gocui.Gui, v *gocui.View) error {
@@ -36,6 +37,10 @@ func (s *SelectorWidget) OpenSelector(g *gocui.Gui, v *gocui.View) error {
 }
 
 func (s *SelectorWidget) CloseSelector(g *gocui.Gui, v *gocui.View) error {
+	if err := s.GetLine(g, v); err != nil {
+		return err
+	}
+
 	if err := g.DeleteView("selector"); err != nil {
 		return err
 	}
@@ -45,10 +50,17 @@ func (s *SelectorWidget) CloseSelector(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
+// TODO: handle how to determine line value based on either index or the object
+func (sw *SelectorWidget) GetLine(g *gocui.Gui, v *gocui.View) error {
+	_, cy := v.Cursor()
+	log.Printf("%d", cy)
+	sw.Updator.UpdateLocation(sw.Locations[cy])
+	return nil
+}
+
 func CursorDown(g *gocui.Gui, v *gocui.View) error {
 	if v != nil {
 		cx, cy := v.Cursor()
-		log.Printf("%d %d", cx, cy)
 		if err := v.SetCursor(cx, cy+1); err != nil {
 			ox, oy := v.Origin()
 			if err := v.SetOrigin(ox, oy+1); err != nil {

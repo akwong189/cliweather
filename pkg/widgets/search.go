@@ -10,6 +10,7 @@ func SearchBar(g *gocui.Gui, v *gocui.View) error {
 			return err
 		}
 
+		v.Title = "Search"
 		v.Editable = true
 
 		if _, err := g.SetCurrentView("search"); err != nil {

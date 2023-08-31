@@ -21,12 +21,8 @@ func StartApp() {
 	g.Highlight = true
 	g.SelFgColor = gocui.ColorCyan
 
-	// api_keys, err := utils.GetApi()
-	// loc := utils.GetCurrentIPLocation()
-	// forcast := utils.GetWeather(api_keys.Weather, loc)
-
 	updators := model.InitalizeUpdators()
-	locs := data.GenerateGeolocations(100)
+	locs := data.GenerateGeolocations(20)
 
 	appData, err := model.InitAppData(&locs, 0, "", updators)
 	if err != nil {
@@ -60,8 +56,9 @@ func initalizeDefault(updator *model.UpdateChannels, location *model.Geolocation
 
 func keyBindings(g *gocui.Gui, app *model.AppData) error {
 	sel := &widgets.SelectorWidget{AppData: app}
+	search := &widgets.SearchWidget{AppUpdator: app.Updators}
 
-	if err := g.SetKeybinding("", gocui.KeyCtrlS, gocui.ModNone, widgets.SearchBar); err != nil {
+	if err := g.SetKeybinding("", gocui.KeyCtrlS, gocui.ModNone, search.SearchBar); err != nil {
 		log.Panicln(err)
 	}
 
@@ -81,7 +78,7 @@ func keyBindings(g *gocui.Gui, app *model.AppData) error {
 		log.Panicln(err)
 	}
 
-	if err := g.SetKeybinding("search", gocui.KeyEnter, gocui.ModNone, widgets.DestroySearchBar); err != nil {
+	if err := g.SetKeybinding("search", gocui.KeyEnter, gocui.ModNone, search.DestroySearchBar); err != nil {
 		log.Panicln(err)
 	}
 

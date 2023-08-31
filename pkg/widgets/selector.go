@@ -2,7 +2,6 @@ package widgets
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/jroimartin/gocui"
@@ -52,7 +51,6 @@ func (s *SelectorWidget) CloseSelector(g *gocui.Gui, v *gocui.View) error {
 // TODO: handle how to determine line value based on either index or the object
 func (sw *SelectorWidget) GetLine(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
-	log.Printf("%d", cy)
 	return sw.AppData.ChangeCurrSelectedLocation(cy)
 }
 

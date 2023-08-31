@@ -27,6 +27,10 @@ func (app AppData) ChangeCurrSelectedLocation(index int) error {
 		return errors.New("location index out of bound")
 	}
 
+	if *app.CurrLocationIndex == index {
+		return nil
+	}
+
 	log.Printf("Changed current location index to %d", index)
 	*app.CurrLocationIndex = index
 	app.Updators.UpdateLocation((*app.Locations)[index])

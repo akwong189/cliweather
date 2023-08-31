@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/akwong189/cliweather/pkg/utils"
+	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/jroimartin/gocui"
 )
 
@@ -12,11 +12,11 @@ type LocationWidget struct {
 	Name string
 	x, y int
 	w    int
-	Loc  chan *utils.Geolocation
+	Loc  chan *model.Geolocation
 }
 
 // creates a new location widget (initalization uses current location)
-func GetLocationWidget(name string, x, y, w int, loc chan *utils.Geolocation) *LocationWidget {
+func GetLocationWidget(name string, x, y, w int, loc chan *model.Geolocation) *LocationWidget {
 	return &LocationWidget{
 		Name: name,
 		x:    x,

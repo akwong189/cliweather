@@ -1,4 +1,4 @@
-package utils
+package model
 
 type UpdateChannels struct {
 	Location chan *Geolocation

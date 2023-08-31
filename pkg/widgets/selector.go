@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/akwong189/cliweather/pkg/utils"
+	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/jroimartin/gocui"
 )
 
 type SelectorWidget struct {
-	Locations []*utils.Geolocation
-	Updator   *utils.UpdateChannels
+	AppData *model.AppData
 }
 
 func (s *SelectorWidget) OpenSelector(g *gocui.Gui, v *gocui.View) error {
@@ -28,7 +27,7 @@ func (s *SelectorWidget) OpenSelector(g *gocui.Gui, v *gocui.View) error {
 		if _, err := g.SetCurrentView("selector"); err != nil {
 			return nil
 		}
-		for _, loc := range s.Locations {
+		for _, loc := range *s.AppData.Locations {
 			fmt.Fprint(v, loc.GetLocationString()+"\n")
 		}
 	}
@@ -54,8 +53,7 @@ func (s *SelectorWidget) CloseSelector(g *gocui.Gui, v *gocui.View) error {
 func (sw *SelectorWidget) GetLine(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
 	log.Printf("%d", cy)
-	sw.Updator.UpdateLocation(sw.Locations[cy])
-	return nil
+	return sw.AppData.ChangeCurrSelectedLocation(cy)
 }
 
 func CursorDown(g *gocui.Gui, v *gocui.View) error {

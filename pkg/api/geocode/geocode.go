@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/akwong189/cliweather/pkg/utils"
+	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/buger/jsonparser"
 )
 
-func RetrieveCoordinates(address string) (*utils.Geolocation, error) {
+func RetrieveCoordinates(address string) (*model.Geolocation, error) {
 	url := "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=" + url.QueryEscape(address) + "&benchmark=2020&format=json"
 	log.Println("contacting url: " + url)
 
@@ -41,8 +41,8 @@ func RetrieveCoordinates(address string) (*utils.Geolocation, error) {
 	return &geolocations[0], nil
 }
 
-func parseAddressMatches(addressMatches []byte) ([]utils.Geolocation, error) {
-	geolocations := make([]utils.Geolocation, 0)
+func parseAddressMatches(addressMatches []byte) ([]model.Geolocation, error) {
+	geolocations := make([]model.Geolocation, 0)
 
 	_, err := jsonparser.ArrayEach(addressMatches, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		if err != nil {
@@ -57,7 +57,7 @@ func parseAddressMatches(addressMatches []byte) ([]utils.Geolocation, error) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		geolocations = append(geolocations, utils.Geolocation{Latitude: lat, Longitude: long})
+		geolocations = append(geolocations, model.Geolocation{Latitude: lat, Longitude: long})
 	})
 
 	// TODO: Add code to handle empty geolocations

@@ -3,11 +3,11 @@ package data
 import (
 	"fmt"
 
-	"github.com/akwong189/cliweather/pkg/utils"
+	"github.com/akwong189/cliweather/pkg/model"
 )
 
-func GenerateGeolocation() *utils.Geolocation {
-	return &utils.Geolocation{
+func GenerateGeolocation() *model.Geolocation {
+	return &model.Geolocation{
 		Longitude: "-121.8939",
 		Latitude:  "37.29.60",
 		Country:   "US",
@@ -17,8 +17,8 @@ func GenerateGeolocation() *utils.Geolocation {
 	}
 }
 
-func GenerateGeolocations(length int) []*utils.Geolocation {
-	locs := make([]*utils.Geolocation, 0)
+func GenerateGeolocations(length int) []*model.Geolocation {
+	locs := make([]*model.Geolocation, 0)
 
 	for i := 0; i < length; i++ {
 		loc := GenerateGeolocation()

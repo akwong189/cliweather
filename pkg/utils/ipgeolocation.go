@@ -6,13 +6,14 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/buger/jsonparser"
 )
 
 // Gets the current locations location via IP address (may not be secure need to check)
 //
 // Deprecated: This is no longer in use
-func GetCurrentIPLocation() *Geolocation {
+func GetCurrentIPLocation() *model.Geolocation {
 	url := "https://freegeoip.app/json"
 	log.Println("contacting url: " + url)
 
@@ -55,6 +56,6 @@ func GetCurrentIPLocation() *Geolocation {
 
 	log.Println("retrieved current city, state, country: ", city, state, country)
 	log.Println("retrieved current location lattitude, longitude: ", lat_float, long_float)
-	return &Geolocation{Name: city, State: state, Country: country, Longitude: fmt.Sprintf("%f", long_float), Latitude: fmt.Sprintf("%f", lat_float)}
+	return &model.Geolocation{Name: city, State: state, Country: country, Longitude: fmt.Sprintf("%f", long_float), Latitude: fmt.Sprintf("%f", lat_float)}
 
 }

@@ -1,4 +1,4 @@
-package utils
+package model
 
 import (
 	"fmt"
@@ -12,6 +12,8 @@ type Geolocation struct {
 	Zip       string
 	State     string
 }
+
+type Geolocations = []*Geolocation
 
 func (g *Geolocation) GetLocationString() string {
 	str := g.Name

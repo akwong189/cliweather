@@ -4,15 +4,10 @@ import (
 	"log"
 
 	"github.com/akwong189/cliweather/pkg/data"
-	"github.com/akwong189/cliweather/pkg/utils"
+	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/akwong189/cliweather/pkg/widgets"
 	"github.com/jroimartin/gocui"
 )
-
-type App struct {
-	locations []*utils.Geolocation
-	updators  *utils.UpdateChannels
-}
 
 // Starts the app
 func StartApp() {
@@ -30,9 +25,13 @@ func StartApp() {
 	// loc := utils.GetCurrentIPLocation()
 	// forcast := utils.GetWeather(api_keys.Weather, loc)
 
-	updators := utils.InitalizeUpdators()
-	// loc := GrabCurrentLocation()
+	updators := model.InitalizeUpdators()
 	locs := data.GenerateGeolocations(100)
+
+	appData, err := model.InitAppData(&locs, 0, "", updators)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	loc_widget := widgets.GetLocationWidget("location", 0, 0, 1, updators.Location)
 	curr_widget := widgets.GetWeatherWidget(data.GenerateWeatherData())
@@ -48,19 +47,19 @@ func StartApp() {
 		log.Panicln(err)
 	}
 
-	if err := keyBindings(g, locs, updators); err != nil {
+	if err := keyBindings(g, appData); err != nil {
 		log.Panicln(err)
 	}
 
 	log.Printf("GUI closed\n")
 }
 
-func initalizeDefault(updator *utils.UpdateChannels, location *utils.Geolocation) {
+func initalizeDefault(updator *model.UpdateChannels, location *model.Geolocation) {
 	updator.UpdateLocation(location)
 }
 
-func keyBindings(g *gocui.Gui, locations []*utils.Geolocation, updator *utils.UpdateChannels) error {
-	sel := &widgets.SelectorWidget{Locations: locations, Updator: updator}
+func keyBindings(g *gocui.Gui, app *model.AppData) error {
+	sel := &widgets.SelectorWidget{AppData: app}
 
 	if err := g.SetKeybinding("", gocui.KeyCtrlS, gocui.ModNone, widgets.SearchBar); err != nil {
 		log.Panicln(err)

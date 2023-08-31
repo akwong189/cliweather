@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/akwong189/cliweather/pkg/utils"
+	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/buger/jsonparser"
 )
 
-func GetGeolocation() *utils.Geolocation {
+func GetGeolocation() *model.Geolocation {
 	resp := retrieveGeolocation()
 	defer resp.Body.Close()
 
@@ -31,7 +31,7 @@ func retrieveGeolocation() *http.Response {
 	return resp
 }
 
-func parseGeolocation(body []byte) *utils.Geolocation {
+func parseGeolocation(body []byte) *model.Geolocation {
 	city, err := jsonparser.GetString(body, "city")
 	if err != nil {
 		log.Fatalln(err)
@@ -53,7 +53,7 @@ func parseGeolocation(body []byte) *utils.Geolocation {
 		log.Fatalln(err)
 	}
 
-	return &utils.Geolocation{
+	return &model.Geolocation{
 		Longitude: long,
 		Latitude:  lat,
 		Name:      city,

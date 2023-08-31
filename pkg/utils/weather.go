@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/akwong189/cliweather/pkg/model"
 	"github.com/buger/jsonparser"
 )
 
@@ -28,7 +29,7 @@ type Forcast struct {
 }
 
 // Weather using darksky api, may change it when dark sky stops providing api support
-func GetWeather(weatherApiKey string, location *Geolocation) *Forcast {
+func GetWeather(weatherApiKey string, location *model.Geolocation) *Forcast {
 	resp, err := callOpenWeatherMapAPI(location.Latitude, location.Longitude, weatherApiKey)
 
 	defer resp.Body.Close()
